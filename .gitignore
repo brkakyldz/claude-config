@@ -1,0 +1,42 @@
+# ~/.claude config repo — commit authored artifacts, never machine-local state.
+#
+# What IS tracked: CLAUDE.md, settings.json, skills/, agents/, commands/,
+# hooks/, statusline-command.sh.
+# Everything below is either secret, regenerable, machine-specific, or private.
+
+# --- credentials and internal state (never commit) ---
+.credentials.json
+.claude.json
+stats-cache.json
+mcp-needs-auth-cache.json
+
+# --- session data ---
+history.jsonl
+sessions/
+session-env/
+backups/
+cache/
+shell-snapshots/
+downloads/
+.last-cleanup
+
+# --- agent / team runtime state ---
+plans/
+plugins/
+tasks/
+teams/
+todos/
+
+# --- telemetry ---
+statsig/
+telemetry/
+usage-data/
+
+# --- IDE integration ---
+ide/
+
+# --- per-project data ---
+# Excluded in full. This directory holds raw conversation transcripts and
+# tool-result dumps from every repo worked in, plus per-project memory notes.
+# None of it is config, and all of it is private — it stays on the machine.
+projects/
