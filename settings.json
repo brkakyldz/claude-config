@@ -35,7 +35,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"C:/Users/brkak/.claude/hooks/guard-bash.mjs\""
+            "command": "node ~/.claude/hooks/guard-bash.mjs"
           }
         ]
       }
@@ -45,7 +45,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"C:/Users/brkak/.claude/hooks/subagent-report.mjs\""
+            "command": "node ~/.claude/hooks/subagent-report.mjs"
           }
         ]
       }
@@ -55,7 +55,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"C:/Users/brkak/.claude/hooks/precompact-dump.mjs\""
+            "command": "node ~/.claude/hooks/precompact-dump.mjs"
           }
         ]
       }
@@ -65,7 +65,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"C:/Users/brkak/.claude/hooks/session-start-context.mjs\""
+            "command": "node ~/.claude/hooks/session-start-context.mjs"
           }
         ]
       }
@@ -75,7 +75,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"C:/Users/brkak/.claude/hooks/stop-synthesis.mjs\""
+            "command": "node ~/.claude/hooks/stop-synthesis.mjs"
           }
         ]
       }
