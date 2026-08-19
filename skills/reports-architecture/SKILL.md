@@ -13,7 +13,7 @@ the architecture** — rely on convention, not a framework.
 ## Usage
 
 ```bash
-node "C:/Users/brkak/.claude/skills/reports-architecture/scripts/scaffold.mjs" <project-root>
+node ~/.claude/skills/reports-architecture/scripts/scaffold.mjs <project-root>
 ```
 
 Defaults to the current directory when no argument is given. The script is

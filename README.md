@@ -19,6 +19,16 @@ Convention rather than framework.
 └── statusline-command.sh
 ```
 
+## Install
+
+```bash
+git clone https://github.com/brkakyldz/claude-config.git ~/.claude-config
+cp -r ~/.claude-config/{settings.json,hooks,skills,statusline-command.sh} ~/.claude/
+```
+
+Merge `settings.json` by hand if you already have one — it registers the five
+hooks and the deny list, nothing machine-specific.
+
 ## Skills
 
 | Skill | Purpose |
@@ -69,6 +79,9 @@ project's `CLAUDE.md`. From that point the hooks take over.
 
 ## Notes
 
+- Hook commands use `~/.claude/...`. If your shell doesn't expand `~` (some
+  Windows setups), replace it with an absolute path in `settings.json`.
+- `statusline-command.sh` needs `jq` on `PATH`; without it the status line is empty.
 - Sandboxing (`sandbox.enabled`) is intentionally not enabled: it relies on macOS
   Seatbelt or Linux/WSL2 bubblewrap and has no Windows equivalent. Worth enabling
   if this config is used from WSL2.

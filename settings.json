@@ -3,19 +3,8 @@
     "type": "command",
     "command": "bash ~/.claude/statusline-command.sh"
   },
-  "extraKnownMarketplaces": {
-    "mem0-plugins": {
-      "source": {
-        "source": "github",
-        "repo": "mem0ai/mem0"
-      }
-    }
-  },
   "autoUpdatesChannel": "latest",
   "theme": "dark-ansi",
-  "enabledPlugins": {
-    "mem0@mem0-plugins": true
-  },
   "permissions": {
     "deny": [
       "Bash(rm -rf:*)",

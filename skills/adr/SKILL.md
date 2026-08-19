@@ -34,7 +34,7 @@ id: 0007
 title: Plain markdown for the reports layer, not a database
 date: 2026-08-12
 status: accepted        # proposed | accepted | superseded by 0012 | deprecated
-deciders: [brkakyldz]
+deciders: [your-handle]
 supersedes: []
 ---
 
