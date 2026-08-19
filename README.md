@@ -88,3 +88,7 @@ project's `CLAUDE.md`. From that point the hooks take over.
 - `--force-with-lease` is deliberately allowed while `--force` is blocked.
 - Hooks are written in Node rather than bash + `jq`: no external dependency, and
   JSON parsing is native.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
