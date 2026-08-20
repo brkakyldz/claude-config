@@ -70,6 +70,8 @@ if (reports.length) {
 }
 call("subagent-report.mjs", { ...base, hook_event_name: "SubagentStop", agent_name: "auth-explorer" });
 check("does not double-write within the freshness window", ls("agents").length === 1);
+call("subagent-report.mjs", { ...base, hook_event_name: "SubagentStop" });
+check("writes nothing when no agent identity is attached", ls("agents").length === 1);
 
 // --- PreCompact -----------------------------------------------------------
 console.log("PreCompact");

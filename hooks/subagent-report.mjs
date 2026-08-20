@@ -19,6 +19,13 @@ safe(async () => {
   const root = findReportsRoot(input.cwd);
   if (!root) return; // stay silent in projects without the reports/ architecture
 
+  // Only a genuinely delegated agent gets a report. Some harnesses fire
+  // SubagentStop at the end of an ordinary main-session turn, with no agent
+  // identity attached — reconstructing there fills reports/agents/ with copies
+  // of the chat. No identity, no report.
+  const agentId = input.agent_name || input.subagent_type;
+  if (!agentId) return;
+
   const agentsDir = path.join(root, "agents");
   if (!ensureDir(agentsDir)) return;
 
@@ -31,7 +38,7 @@ safe(async () => {
   const body = lastAssistantText(messages);
   if (!body) return;
 
-  const agentName = slug(input.agent_name || input.subagent_type || "subagent", 32);
+  const agentName = slug(agentId, 32);
   const firstUser = messages.find((m) => m.role === "user");
   const task = (firstUser?.text || "").split("\n")[0].slice(0, 120).replace(/"/g, "'");
 
