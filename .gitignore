@@ -40,3 +40,6 @@ ide/
 # tool-result dumps from every repo worked in, plus per-project memory notes.
 # None of it is config, and all of it is private — it stays on the machine.
 projects/
+
+# --- settings backups (machine-local) ---
+settings.json.bak*

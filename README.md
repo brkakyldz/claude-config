@@ -11,6 +11,7 @@ Convention rather than framework.
 
 ```
 .
+├── CLAUDE.md             # the global working standard, loaded in every session
 ├── settings.json         # permissions.deny + hook registrations
 ├── hooks/                # deterministic guarantees (Node, no dependencies)
 │   ├── lib.mjs           # shared helpers; every hook fails silently by design
