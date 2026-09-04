@@ -1,14 +1,20 @@
 ---
 name: reports-architecture
-description: Scaffolds the reports/ folder architecture (agents, synthesis, backlog, audits, benchmarks, research, decisions) into a project in one step, and supplies the CLAUDE.md reporting contract. Use when the user says "set up the reports skeleton", "add the report architecture to this project", "scaffold reports", or when starting a new agentic project.
+description: Scaffolds the reports/ research store into a project — a single place where delegated web research and context-gathering output lands as dated markdown. Use when the user says "set up reports", "scaffold the research store", "add the reports folder to this project", or before the first /research run in a repo that has no reports/ folder yet.
 allowed-tools: Bash, Read, Write, Edit, Glob
 ---
 
-# Scaffold the reports/ architecture
+# Scaffold the reports/ research store
 
-Creates the standard folder skeleton that makes agent output durable, traceable,
-and transferable to an orchestrator. Governing principle: **the filesystem is
-the architecture** — rely on convention, not a framework.
+`reports/` is **a research store and nothing else**: the place where the
+`research` skill's deliverables land so a future session can read them back
+instead of re-searching the internet.
+
+It used to be a whole working record — agent reports, syntheses, backlog,
+audits, benchmarks. That layer is gone. Durable memory, open work and session
+history now live in the second brain (`C:\my-brain`), and project decisions go
+to `docs/decisions/` via the `adr` skill. Keeping a parallel record in every
+repo meant maintaining two brains, and the second one never got read.
 
 ## Usage
 
@@ -16,42 +22,43 @@ the architecture** — rely on convention, not a framework.
 node ~/.claude/skills/reports-architecture/scripts/scaffold.mjs <project-root>
 ```
 
-Defaults to the current directory when no argument is given. The script is
-idempotent — it never overwrites an existing file, it only fills in what's missing.
+Defaults to the current directory. Idempotent — it never overwrites an existing
+file and never touches folders it didn't create.
 
 ## What it creates
 
 ```
 reports/
-├── .reports-architecture   # marker — how the hooks recognize the architecture
-├── README.md               # what each folder is for
-├── agents/                 # raw per-agent reports (written by the agent-report skill)
-├── synthesis/              # orchestrator syntheses (report-synthesis skill)
-├── backlog/                # unfinished work, PreCompact checkpoints
-├── audits/{48h,72h}/       # time-windowed audits (audit-window skill)
-├── benchmarks/             # measurement / performance output
-├── research/               # context and architecture research
-└── decisions/              # ADRs — "why was this chosen" (adr skill)
+├── .reports-architecture   # marker — how the research skill recognizes the store
+├── README.md               # what goes here and what doesn't
+└── research/               # dated research reports, YYYY-MM-DD_<slug>.md
 ```
 
-## After scaffolding
+That's the whole architecture. The marker filename is kept for backward
+compatibility with repos scaffolded under the old layout.
 
-1. **CLAUDE.md contract.** The script writes a ready-made snippet at the bottom of
-   `reports/README.md`. Add it to the project's `CLAUDE.md`. Respect the 60-line
-   target / 200-line ceiling — if the snippet makes the file too long, reference
-   `@reports/README.md` instead of inlining it.
+## What goes in, what stays out
 
-2. **`.gitignore` decision.** Default: `reports/` **is committed** — traceability is
-   the whole point. If the report noise is unwanted, ignore only
-   `reports/backlog/precompact_*.md`; those are machine-generated intermediates.
+| Goes in `reports/research/` | Lives elsewhere |
+|---|---|
+| Web-research reports from `/research` | Durable facts and notes → the vault |
+| Comparisons of libraries / tools / approaches | Decisions expensive to reverse → `docs/decisions/` (`adr` skill) |
+| Prior-art and context gathering before a build | Open work, session logs, checkpoints → the vault |
 
-3. **Subagent definitions.** Add "when finished, write your report to
-   `reports/agents/` in the `agent-report` format" to the definitions of agents
-   that write code or do research. The `SubagentStop` hook already guarantees
-   this, but a report the agent wrote itself is always better.
+One file per research run, `YYYY-MM-DD_<slug>.md`, with its sources linked
+inline. Reports are **immutable**: a research report is what was believed on
+that date. A correction is a newer report that references the old one, never an
+edit to it.
+
+## Legacy folders
+
+Repos scaffolded before this change still carry `agents/`, `synthesis/`,
+`backlog/`, `audits/`, `benchmarks/` and `decisions/`. Leave them alone — the
+content is real history. Nothing writes to them any more; the scaffold won't
+recreate them, and the hooks that fed them are deleted.
 
 ## When not to use this
 
-Don't scaffold it into one-off, short-lived repos. This skeleton exists for
-projects where output from multiple agents accumulates over time and has to be
-read back later.
+A repo that will never have research written into it doesn't need the folder.
+The `research` skill falls back to a single `research-<slug>.md` at the project
+root, which is fine for one-off cases.

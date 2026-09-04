@@ -16,24 +16,18 @@ export async function readInput() {
 }
 
 /**
- * Walk up from cwd to locate the reports/ architecture.
- * Prefers the marker file (reports/.reports-architecture); falls back to the
- * presence of reports/agents/. Returns null when not found.
- *
- * This is what guarantees the hooks stay inert in projects that don't use the
- * architecture — user-level config must not litter every repo.
+ * Walk up from cwd to the nearest project root — a directory holding a
+ * `.claude/` folder, falling back to a `.git` repo root. Returns null when
+ * neither is found, which is what keeps user-level hooks inert in a random
+ * directory: user config must not litter an unrelated tree.
  */
-export function findReportsRoot(startDir) {
+export function findProjectRoot(startDir) {
   let dir = startDir || process.cwd();
+  let gitRoot = null;
   for (let i = 0; i < 8; i++) {
-    const reports = path.join(dir, "reports");
     try {
-      if (
-        fs.existsSync(path.join(reports, ".reports-architecture")) ||
-        fs.statSync(path.join(reports, "agents")).isDirectory()
-      ) {
-        return reports;
-      }
+      if (fs.statSync(path.join(dir, ".claude")).isDirectory()) return dir;
+      if (!gitRoot && fs.existsSync(path.join(dir, ".git"))) gitRoot = dir;
     } catch {
       /* not here — keep walking up */
     }
@@ -41,25 +35,21 @@ export function findReportsRoot(startDir) {
     if (parent === dir) break;
     dir = parent;
   }
-  return null;
+  return gitRoot;
+}
+
+/** The second brain vault marks itself; it manages its own checkpoints. */
+export function isVault(root) {
+  try {
+    return fs.existsSync(path.join(root, "core", ".vault-active"));
+  } catch {
+    return false;
+  }
 }
 
 /** 2026-08-12T14-03-55Z — filename-safe timestamp */
 export function stamp(d = new Date()) {
   return d.toISOString().replace(/:/g, "-").replace(/\.\d+Z$/, "Z");
-}
-
-/** 2026-08-12 */
-export function today(d = new Date()) {
-  return d.toISOString().slice(0, 10);
-}
-
-export function slug(s, max = 48) {
-  return (s || "unnamed")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "")
-    .slice(0, max) || "unnamed";
 }
 
 export function ensureDir(p) {
@@ -107,40 +97,6 @@ export function readTranscript(transcriptPath, limit = 400) {
     if (text) out.push({ role, text });
   }
   return out;
-}
-
-/** The last assistant message — usually a subagent's actual report. */
-export function lastAssistantText(messages) {
-  for (let i = messages.length - 1; i >= 0; i--) {
-    if (messages[i].role === "assistant") return messages[i].text;
-  }
-  return "";
-}
-
-/**
- * List content files in a directory, newest first.
- * README.md (the scaffold's per-folder description), files starting with `_`
- * (markers such as _PENDING) and dotfiles are not content.
- */
-export function filesByMtime(dir, ext = ".md") {
-  try {
-    return fs
-      .readdirSync(dir)
-      .filter(
-        (f) =>
-          f.endsWith(ext) &&
-          f.toLowerCase() !== "readme.md" &&
-          !f.startsWith("_") &&
-          !f.startsWith(".")
-      )
-      .map((f) => {
-        const full = path.join(dir, f);
-        return { name: f, path: full, mtime: fs.statSync(full).mtimeMs };
-      })
-      .sort((a, b) => b.mtime - a.mtime);
-  } catch {
-    return [];
-  }
 }
 
 /** Wrapper that makes a hook swallow its own failures. */

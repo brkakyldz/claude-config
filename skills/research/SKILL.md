@@ -221,8 +221,8 @@ usually settles it. Common cases:
 - A vault or notes repo → a note under `notes/` with that vault's frontmatter
   schema, `source:` listing the URLs (research is external, untrusted content
   — the marker is mandatory), and at least one outbound `[[wikilink]]`. Writing
-  straight to `notes/` is correct here and does not violate an inbox-first
-  rule: this pipeline *is* the distillation step, not a raw capture.
+  straight to `notes/` is correct: this pipeline *is* the distillation step,
+  so there is nothing to stage first.
 - Anywhere else → `research-<slug>.md` at the root of the working directory,
   unless the user named a location. Don't invent a folder for it and don't
   read intent into an existing empty directory; one obvious file at the top

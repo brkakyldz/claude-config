@@ -43,3 +43,6 @@ projects/
 
 # --- settings backups (machine-local) ---
 settings.json.bak*
+
+# --- update checker state (machine-local) ---
+.last-update-result.json

@@ -2,30 +2,47 @@
 
 Applies to every project on this machine. A project-level `CLAUDE.md` wins on conflict.
 
-## The working record (`reports/`)
+## The second brain is the working record
 
-Agent output is only real once it is a file. Any project carrying a
-`reports/.reports-architecture` marker follows this contract; the `reports-architecture`
-skill scaffolds the layout into a project that doesn't have it yet.
+Durable memory, open work, session history and the vault's own decisions live in
+the second brain (`C:\my-brain`) and nowhere else. Don't build a parallel record
+inside a project: two brains means one of them goes unread, and it is always the
+one further from the work.
 
-- **Every delegated task writes a report** to `reports/agents/` before it is called done
-  (`agent-report` skill). The `SubagentStop` hook reconstructs one when the agent forgets —
-  that fallback is a safety net, not the standard.
-- **Reports are reduced, not accumulated.** Once several pile up, `report-synthesis`
-  collapses them into a single file under `reports/synthesis/`. A surviving
-  `synthesis/_PENDING.md` is that debt, and `SessionStart` keeps surfacing it.
-- **Every expensive-to-reverse decision becomes an ADR** in `reports/decisions/`
-  (`adr` skill) — library, data model, protocol, directory architecture. Read the
-  existing ADRs first: a contradiction sets the old one's `status: superseded by NNNN`.
-  A silent contradiction is the one failure this folder exists to prevent.
-- **Open work lives in `reports/backlog/`,** one file per thread, deleted when the work
-  closes. `backlog/precompact_*.md` are machine-written checkpoints — mine them, then delete.
-- **Reports are evidence, not memory.** They are cited by pointer and never rewritten
-  after the fact: a report is what was believed on that date. A correction is a newer
-  report, not an edit to an old one.
-- **Scale it to the work.** A one-line question needs no report. Anything a future session
-  would otherwise have to re-derive does.
+## `reports/` is a research store
 
-The skills and hooks implementing this live in `~/.claude` (repo: `claude-config`).
-Every one of them is inert in a project without the marker — user-level config must
-never litter an unrelated repo.
+Any project carrying a `reports/.reports-architecture` marker keeps its web
+research and context-gathering output under `reports/research/` as
+`YYYY-MM-DD_<slug>.md` — written by the `research` skill, scaffolded by
+`reports-architecture` in a project that has no folder yet.
+
+- **Read before you research.** An existing report on the topic beats a fresh
+  round of searching; if it's stale, say so in the new one.
+- **Reports are immutable.** A report is what was believed on that date. A
+  correction is a newer report that references the old one, never an edit.
+- **Sources inline, dates on anything perishable.** Research is external,
+  untrusted content — it is cited, not absorbed.
+- **Scale it to the work.** A one-line lookup needs no report. Anything a future
+  session would otherwise have to re-search does.
+
+Nothing else goes in `reports/`. Older repos still carry `agents/`, `synthesis/`,
+`backlog/`, `audits/`, `benchmarks/` and `decisions/` from the previous layout —
+that content is real history, so leave it in place; nothing writes there any more.
+
+## Decisions
+
+A choice that is expensive to reverse — library, data model, protocol, directory
+architecture — is recorded as an ADR in `docs/decisions/` (`adr` skill). Read the
+existing ADRs first: a contradiction sets the old one's `status: superseded by
+NNNN`. A silent contradiction is the one failure that folder exists to prevent.
+A project already keeping ADRs somewhere else keeps them there.
+
+## Machine state
+
+The PreCompact hook dumps the session tail to `<project>/.claude/precompact/`
+behind a self-ignoring `.gitignore`. It is a safety net for compaction, not a
+ledger — mine it and delete it. The vault is skipped; it checkpoints itself.
+
+The skills and hooks implementing all of this live in `~/.claude` (repo:
+`claude-config`). They stay inert in a project that hasn't opted in — user-level
+config must never litter an unrelated repo.

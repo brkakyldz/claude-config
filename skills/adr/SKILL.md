@@ -1,6 +1,6 @@
 ---
 name: adr
-description: Records an architecture decision as an ADR under reports/decisions/ and checks it against the existing ADRs for contradictions. Use when a technical choice that is expensive to reverse is made (library, data model, protocol, directory architecture), or when the user says "record this decision" or "write down why we chose this".
+description: Records an architecture decision as an ADR under docs/decisions/ and checks it against the existing ADRs for contradictions. Use when a technical choice that is expensive to reverse is made (library, data model, protocol, directory architecture), or when the user says "record this decision" or "write down why we chose this".
 allowed-tools: Read, Write, Glob, Grep
 ---
 
@@ -12,15 +12,28 @@ and humans from contradicting the past.
 
 ## Read first, then write
 
-**Scan** the existing ADRs under `reports/decisions/`. If the new decision
+**Scan** the existing ADRs under the project's decisions folder (see *Where they live*). If the new decision
 contradicts an earlier one, writing a new ADR is not enough — set the old ADR's
 `status` to `superseded by NNNN`. Never leave the contradiction silent; internal
 consistency is the only thing that makes this folder worth anything.
 
+## Where they live
+
+`docs/decisions/` in the project. ADRs used to sit under `reports/decisions/`;
+`reports/` is now a research store only, and a decision record is not research.
+
+Two exceptions, both about not splitting a sequence:
+
+- **A project that already has `reports/decisions/` with ADRs in it** keeps
+  writing there. Numbering is a single increasing sequence per project — moving
+  it mid-stream buys tidiness and costs traceability.
+- **The vault** (`C:\my-brain`) keeps its ADRs flat in `archive/`, per its own
+  `CLAUDE.md`. A project's conventions always win over this skill's default.
+
 ## Filename
 
 ```
-reports/decisions/NNNN-kebab-case-title.md
+docs/decisions/NNNN-kebab-case-title.md
 ```
 
 `NNNN` is four digits, increasing, and **never reused** (a deleted ADR leaves its

@@ -1,15 +1,18 @@
-// PreCompact — dump findings to disk before the context is compacted.
+// PreCompact — dump the session tail to disk before the context is compacted.
 //
 // Rationale: intermediate findings lost during compaction are the most
-// expensive kind of loss. This hook writes a short core of the session into
-// reports/backlog/ before compaction; the next session surfaces it via the
-// SessionStart hook.
+// expensive kind of loss. This is the safety net for ordinary projects; the
+// vault has its own checkpoint hook and is skipped here.
+//
+// Output is machine state, not a working record: it lands in
+// <project>/.claude/precompact/ behind a self-ignoring .gitignore, so it never
+// enters the tracked tree.
 
 import fs from "node:fs";
 import path from "node:path";
 import { execSync } from "node:child_process";
 import {
-  readInput, safe, findReportsRoot, stamp, ensureDir, readTranscript,
+  readInput, safe, findProjectRoot, isVault, stamp, ensureDir, readTranscript,
 } from "./lib.mjs";
 
 const TAIL = 24;        // how many trailing messages to keep
@@ -17,11 +20,15 @@ const PER_MSG = 700;    // per-message character cap
 
 safe(async () => {
   const input = await readInput();
-  const root = findReportsRoot(input.cwd);
-  if (!root) return;
+  const root = findProjectRoot(input.cwd);
+  if (!root) return;      // no .claude/ or .git — not a project we manage
+  if (isVault(root)) return; // the vault checkpoints itself
 
-  const dir = path.join(root, "backlog");
+  const dir = path.join(root, ".claude", "precompact");
   if (!ensureDir(dir)) return;
+  // Self-ignoring: whatever this hook writes stays out of git.
+  const ignore = path.join(dir, ".gitignore");
+  if (!fs.existsSync(ignore)) fs.writeFileSync(ignore, "*\n", "utf8");
 
   const messages = readTranscript(input.transcript_path).slice(-TAIL);
   if (!messages.length) return;
@@ -39,14 +46,13 @@ safe(async () => {
     `session: ${input.session_id || "unknown"}`,
     `trigger: precompact/${input.trigger || "auto"}`,
     branch ? `branch: ${branch}` : "branch: (no git)",
-    "status: open",
     "---",
     "",
     "# PreCompact checkpoint",
     "",
-    "A slice captured immediately before the context was compacted. When you",
-    "return to this work, review it with the `report-synthesis` skill; delete the",
-    "items that closed, and delete this file once it is empty.",
+    "A slice captured immediately before the context was compacted. Untracked",
+    "machine state — mine it for anything that still matters, then delete it.",
+    "Nothing reads this automatically.",
     "",
     "## Conversation tail",
     "",
