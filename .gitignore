@@ -46,3 +46,20 @@ settings.json.bak*
 
 # --- update checker state (machine-local) ---
 .last-update-result.json
+
+# --- shared kit (ADR 0044 in my-brain) ---
+# Every entry in skills/ is a directory junction into C:/berke-skills/skills,
+# created by C:/berke-skills/scripts/sync.mjs. Tracking a junction path lets a
+# stash or checkout write *through* it into the kit, so none is tracked.
+skills/
+
+# --- desktop app runtime state ---
+daemon/
+daemon.log
+file-history/
+jobs/
+paste-cache/
+policy-limits.json
+policy-limits.json.stamp.json
+remote-settings.json
+scheduled-tasks/

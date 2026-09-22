@@ -1,5 +1,12 @@
 # claude-config
 
+> **2026-09-22:** Claude Code and Codex now run side by side on this machine, so
+> the global skills, the global hooks and the global working standard moved to
+> one shared kit both runtimes point at. `CLAUDE.md` here is a one-line import
+> of that standard, and `skills/` holds junctions only. What remains tracked is
+> Claude-specific: `settings.json` and `statusline-command.sh`. The layout
+> below is the pre-2026-09-22 history.
+
 Personal Claude Code environment: skills, hooks, and settings, versioned so it
 survives a machine and travels between them.
 
